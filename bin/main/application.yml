@@ -11,6 +11,9 @@ spring:
      hibernate:
        #show_sql: true #시스템 아웃으로 찍지말고 로그로 찍어야 함
        format_sql: true
+ thymeleaf:
+   prefix: classpath:/templates/
+   suffix: .html
 logging.level:
  org.hibernate.SQL: debug
  #org.hibernate.type: trace #쿼리 파라미터 찍는법 1 
