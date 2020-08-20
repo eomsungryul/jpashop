@@ -10,29 +10,43 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
 import jpabook.jpashop.domain.Category;
+import jpabook.jpashop.exception.NotEnoughStockException;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="dtype")//ºÏÀÌ¸é ¾î¶»°Ô ³ÖÀ»°Å¾ß? ÀÌ·±½ÄÀ¸·Î 
-@Getter @Setter
+@DiscriminatorColumn(name = "dtype") // ë¶ì´ë©´ ì–´ë–»ê²Œ ë„£ì„ê±°ì•¼? ì´ëŸ°ì‹ìœ¼ë¡œ
+@Getter
+@Setter
 public abstract class Item {
 
-	@Id @GeneratedValue
+	@Id
+	@GeneratedValue
 	@Column(name = "item_id")
 	private Long id;
-	
+
 	private String name;
 	private int price;
 	private int stockQuantity;
-	
-	@ManyToMany(mappedBy = "items") //´Ù´ë´Ùµµ ¿¬°ü°ü°èÀÇ ÁÖÀÎÀ» Á¤ÇØ¾ßÇÔ 
-	private List<Category> categories= new ArrayList<>();
+
+	@ManyToMany(mappedBy = "items") // ë‹¤ëŒ€ë‹¤ë„ ì—°ê´€ê´€ê³„ì˜ ì£¼ì¸ì„ ì •í•´ì•¼í•¨
+	private List<Category> categories = new ArrayList<>();
+
+	// ==ë¹„ì§€ë‹ˆìŠ¤ ë¡œì§==//
+	public void addStock(int quantity) {
+		this.stockQuantity += quantity;
+	}
+
+	public void removeStock(int quantity) {
+		int restStock = this.stockQuantity - quantity;
+		if (restStock < 0) {
+			throw new NotEnoughStockException("need more stock");
+		}
+		this.stockQuantity = restStock;
+	}
 
 }
