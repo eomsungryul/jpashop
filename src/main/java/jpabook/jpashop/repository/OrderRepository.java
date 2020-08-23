@@ -94,6 +94,11 @@ public class OrderRepository {
 		return query.getResultList();
 	}
 
+	public List<Order> findAll(OrderSearch orderSearch) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 	//Querydsl
 //	public List<Order> findAll(OrderSearch orderSearch) {

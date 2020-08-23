@@ -13,13 +13,27 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ItemService {
+
 	private final ItemRepository itemRepository;
 
 	@Transactional
 	public void saveItem(Item item) {
 		itemRepository.save(item);
 	}
-	//트랜잭션이 없으니 리드온니가 먹힘
+
+	/**
+	 * 영속성 컨텍스트가 자동 변경
+	 * @param i 
+	 */
+	@Transactional //아니면 DTO로 해도댐
+	public void updateItem(Long id, String name, int price, int stockQuantity) {
+		Item item = itemRepository.findOne(id);
+		item.setName(name);
+		item.setPrice(price);
+		item.setStockQuantity(stockQuantity);
+	}
+
+	// 트랜잭션이 없으니 리드온니가 먹힘
 	public List<Item> findItems() {
 		return itemRepository.findAll();
 	}
@@ -27,4 +41,5 @@ public class ItemService {
 	public Item findOne(Long itemId) {
 		return itemRepository.findOne(itemId);
 	}
+
 }

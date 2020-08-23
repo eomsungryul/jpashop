@@ -12,6 +12,7 @@ public class ItemRepository {
 
 	private final EntityManager em;
 
+	//단순하게 할때만 이렇게 함 변경감지가 제일 좋음 
 	public void save(Item item) {
 		if (item.getId() == null) {
 			em.persist(item);
