@@ -9,6 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,6 +22,7 @@ public class Delivery {
 	@Column(name = "delivery_id")
 	private Long id;
 
+	@JsonIgnore //양방향중에 하나는 무조건 표시
 	@OneToOne(mappedBy = "delivery")
 	private Order order;
 	

@@ -71,8 +71,8 @@ public class OrderRepository {
 
 	}
 
-	//권장하는 방법이 아님..!! 그럼 뭘로 하냐!
-	//유지보수가 너무 힘들어서 안씀..
+	// 권장하는 방법이 아님..!! 그럼 뭘로 하냐!
+	// 유지보수가 너무 힘들어서 안씀..
 	public List<Order> findAllByCriteria(OrderSearch orderSearch) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Order> cq = cb.createQuery(Order.class);
@@ -99,14 +99,16 @@ public class OrderRepository {
 		return null;
 	}
 
+	public List<Order> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-	//Querydsl
-//	public List<Order> findAll(OrderSearch orderSearch) {
-//
-//		QOrder order = QOrder
-//		return null;
-//
-//	}
-
+	// OrderRepository 추가 코드
+	public List<Order> findAllWithMemberDelivery() {
+		return em.createQuery("select o from Order o" + " join fetch o.member m" + " join fetch o.delivery d",
+				Order.class).getResultList();
+	}
+	
 
 }

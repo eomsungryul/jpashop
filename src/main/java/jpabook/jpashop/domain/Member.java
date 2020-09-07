@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,10 +29,11 @@ public class Member {
 	
 	private String name;
 	
-	@Embedded //µÑÁß ÇÏ³ª¸¸ ÇØµµµÊ
+	@Embedded //ï¿½ï¿½ï¿½ï¿½ ï¿½Ï³ï¿½ï¿½ï¿½ ï¿½Øµï¿½ï¿½ï¿½
 	private Address address;
 	
-	@OneToMany(mappedBy = "member") //¿¬°ü°ü°èÀÇ ÁÖÀÎÀÌ ¾Æ´Ï¿¡¿© ¸â¹ö°¡ ÁÖÀÎÀÌ¿©
+	@JsonIgnore
+	@OneToMany(mappedBy = "member") //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´Ï¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì¿ï¿½
 	private List<Order> orders = new ArrayList<>();
 
 }
