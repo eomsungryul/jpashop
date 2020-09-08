@@ -12,6 +12,7 @@ spring:
      hibernate:
        #show_sql: true #시스템 아웃으로 찍지말고 로그로 찍어야 함
        format_sql: true
+       default_batch_fetch_size: 1000 #in쿼리의 개수 크기는 적당한 사이즈를 골라야 하는데, 100~1000 사이를 선택하는 것을 권장한다
  thymeleaf:
    prefix: classpath:/templates/
    suffix: .html
