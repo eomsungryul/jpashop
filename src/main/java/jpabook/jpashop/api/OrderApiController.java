@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,6 +15,10 @@ import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
+import jpabook.jpashop.repository.order.query.OrderFlatDto;
+import jpabook.jpashop.repository.order.query.OrderItemQueryDto;
+import jpabook.jpashop.repository.order.query.OrderQueryDto;
+import jpabook.jpashop.repository.order.query.OrderQueryRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -32,7 +37,9 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 public class OrderApiController {
+
 	private final OrderRepository orderRepository;
+	private final OrderQueryRepository orderQueryRepository;
 
 	/**
 	 * V1. 엔티티 직접 노출 - Hibernate5Module 모듈 등록, LAZY=null 처리 - 양방향 관계 문제 발생
@@ -67,8 +74,7 @@ public class OrderApiController {
 
 	/**
 	 * V3.1 엔티티를 조회해서 DTO로 변환 페이징 고려 - ToOne 관계만 우선 모두 페치 조인으로 최적화 - 컬렉션 관계는
-	 * hibernate.default_batch_fetch_size, @BatchSize로 최적화
-	 * n+1 문제를 1+1로 최적화됨
+	 * hibernate.default_batch_fetch_size, @BatchSize로 최적화 n+1 문제를 1+1로 최적화됨
 	 */
 	@GetMapping("/api/v3.1/orders")
 	public List<OrderDto> ordersV3_page(@RequestParam(value = "offset", defaultValue = "0") int offset,
@@ -76,6 +82,28 @@ public class OrderApiController {
 		List<Order> orders = orderRepository.findAllWithMemberDelivery(offset, limit);
 		List<OrderDto> result = orders.stream().map(o -> new OrderDto(o)).collect(toList());
 		return result;
+	}
+
+	@GetMapping("/api/v4/orders")
+	public List<OrderQueryDto> ordersV4() {
+		return orderQueryRepository.findOrderQueryDtos();
+	}
+
+	// 쿼리 2개
+	@GetMapping("/api/v5/orders")
+	public List<OrderQueryDto> ordersV5() {
+		return orderQueryRepository.findAllByDto_optimization();
+	}
+
+	@GetMapping("/api/v6/orders")
+	public List<OrderQueryDto> ordersV6() {
+		List<OrderFlatDto> flats = orderQueryRepository.findAllByDto_flat();
+		return flats.stream()
+				.collect(Collectors.groupingBy(o -> new OrderQueryDto(o.getOrderId(), o.getName(), o.getOrderDate(), o.getOrderStatus(), o.getAddress())
+				,Collectors.mapping(o -> new OrderItemQueryDto(o.getOrderId(), o.getItemName(), o.getOrderPrice(), o.getCount()), toList())))
+				.entrySet().stream()
+				.map(e -> new OrderQueryDto(e.getKey().getOrderId(), e.getKey().getName(), e.getKey().getOrderDate(), e.getKey().getOrderStatus(), e.getKey().getAddress(), e.getValue()))
+				.collect(toList());
 	}
 
 	@Data
